@@ -7,6 +7,7 @@ import { RiDeleteBin6Line as Excluir } from "react-icons/ri";
 export default function Produtos() {
   document.title = "Produtos";
 
+const web_app_url = "https://script.google.com/macros/s/AKfycbxxx51Z24L5DgThBvLwF6UBisBY1kxYoFEgAJjVIh4oa8gQpppv-C0JoEXpNP4fgYx3/exec";
   //REF do DIALOG para o produto que será deletado:
   const dialogRef = useRef<HTMLDialogElement>(null);
   //STATE do DIALOG para o produto que será deletado:
@@ -31,15 +32,24 @@ export default function Produtos() {
     const carregaProdutos = async ()=>{
       try {
 
-        const response = await fetch("http://localhost:3001/produtos");
+        //const response = await fetch("http://localhost:3001/produtos");
+        const response = await fetch(web_app_url);
 
         if(!response.ok){
           throw new Error(`Falha na requisição dos produtos... ${response.status} - ${response.statusText}`);
         }
 
-        const data:TipoProduto[] = await response.json();
-        console.log(data);
-        setProdutos(data); //Atualizando a lista de produtos
+        const data:any[][] = await response.json();
+        const prod = data.slice(1).map((p)=>({
+          id:p[0],
+          nome:p[1],
+          preco:p[2],
+          estoque:p[3],
+          avatar:p[4]
+        }))
+        /*const data:TipoProduto[] = await response.json();
+        console.log(data);*/
+        setProdutos(prod); //Atualizando a lista de produtos
         //setProdutos(data); //Atualizando a lista de produtos
 
       } catch (error) {
@@ -54,7 +64,10 @@ export default function Produtos() {
   const handleDelete = async()=>{
       try {
 
-        const response = await fetch(`http://localhost:3001/produtos/${idExclusivo}`, {
+        /*const response = await fetch(`http://localhost:3001/produtos/${idExclusivo}`, {
+          method: "DELETE",
+        });*/
+        const response = await fetch(`web_app_url/${idExclusivo}`, {
           method: "DELETE",
         });
 
